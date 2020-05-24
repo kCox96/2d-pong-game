@@ -1,4 +1,4 @@
-const START_SPEED = 5;
+const START_SPEED = 7;
 const BALL_RADIUS = 30;
 
 const PADDLE_WIDTH = 20;
@@ -51,8 +51,8 @@ function setup() {
   ball = createVector(width / 2, height / 2);
 
   // set random trajectory for ball
-  ballVel = createVector(random(-1, 1), random(-1, 1));
-  // set speed 
+  ballVel = createVector(random(-2, 2), random(-2, 2));
+  // set speed
   ballVel.setMag(START_SPEED);
 }
 
@@ -107,7 +107,7 @@ function handleBall() {
         // reverse ball direction
         ballVel.x = ballVel.x * -1;
         // speed up ball
-        ballVel.mult(random(1, 1.1));
+        ballVel.mult(random(1, 2));
       }
     }
 
@@ -128,7 +128,7 @@ function handleBall() {
         // Invert x axis direction
         ballVel.x = ballVel.x * -1;
         // speed up ball
-        ballVel.mult(random(1, 1.1));
+        ballVel.mult(random(1, 2));
       }
     }
   }
