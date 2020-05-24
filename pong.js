@@ -1,3 +1,9 @@
+const START_SPEED = 5;
+const BALL_RADIUS = 30;
+
+const PADDLE_WIDTH = 20;
+const PADDLE_HEIGHT = 150;
+
 // paddle elements
 var paddle1;
 var paddle2;
@@ -6,107 +12,173 @@ var paddle2;
 var paddle1Vel;
 var paddle2Vel;
 
+// score elements
+var p1Score;
+var p2Score;
+
 // ball element
 var ball;
 // ball velocity element
 var ballVel;
 
+function preload(){
+  // load background image
+  bg = loadImage('https://static.vecteezy.com/system/resources/previews/000/666/129/original/retro-game-background.jpg');
+
+}
+
 function setup() {
-  createCanvas(600, 400);
-  // set Y coordinates of paddles
+  createCanvas((windowWidth - 50), (windowHeight -50));
+
+  textAlign(CENTER);
+  textSize(30);
+  fill(255);
+  textFont('Impact');
+
+
+
+  // set Y coordinates of paddles so they initialise at mid-screen
   paddle1 = height / 2 - 50;
   paddle2 = height / 2 - 50;
 
   paddle1Vel = 0;
   paddle2Vel = 0;
 
-// create ball
+  p1Score = 0;
+  p2Score = 0;
+
+  // create ball in the middle of canvas
   ball = createVector(width / 2, height / 2);
 
-// set random trajectory for ball
-  ballVel = createVector(random(-2, 2), random(-2, 2));
-
+  // set random trajectory for ball
+  ballVel = createVector(random(-1, 1), random(-1, 1));
+  // set speed 
+  ballVel.setMag(START_SPEED);
 }
 
 // create canvas
-function draw(){
-  background(100);
+function draw() {
+  // resize image to fit canvas
+  bg.resize((windowWidth - 50), (windowHeight -50));
+  background(bg);
 
-// draw  paddles on canvas
-  rect(20, paddle1, 10, 100);
-  rect(width - 30, paddle2, 10, 100);
+  // draw  paddles on canvas
+  rect(PADDLE_WIDTH * 2, paddle1, PADDLE_WIDTH, PADDLE_HEIGHT);
+  rect(width - (PADDLE_WIDTH * 3), paddle2, PADDLE_WIDTH, PADDLE_HEIGHT);
 
-// draw ball on canvas
-  ellipse(ball.x, ball.y, 20);
+  // draw ball on canvas
+  ellipse(ball.x, ball.y, BALL_RADIUS);
 
-// handle paddle movement
+  // draw scoreboard
+  text("Player 1:  " + p1Score + "  |  " + "Player 2:  " + p2Score, width / 2, 50);
+  // handle paddle movement
   handleMovement();
-// handle ball movement
+  // handle ball movement
   handleBall();
 
 }
 
 /* Function that handles ball movement*/
-function handleBall(){
+function handleBall() {
 
-ball.x = ball.x + ballVel.x;
-ball.y = ball.y + ballVel.y;
+  ball.x = ball.x + ballVel.x;
+  ball.y = ball.y + ballVel.y;
 
-// top and bottom collisons
-if (ball.y > (height - 10)  || ball.y < 10) {
-  // Invert direction if ball meets top or bottom of canvas
-  ballVel.y = ballVel.y * - 1;
-}
-
-// paddle collisions
-if (ball.x < 20){
-  // right side
-if (ball.y < paddle1 && ball.y > paddle1 + 100){
-  ballVel.x = ballVel * -1;
-}
-
-}
-else if (ball.x > width - 30){
-  // left side
-  if (ball.y < paddle2 && ball.y > paddle2 + 100){
-    ballVel.x = ballVel * -1;
+  // top and bottom collisons
+  if (ball.y > (height - 10) || ball.y < 10) {
+    // Invert y direction if ball meets top or bottom of canvas
+    ballVel.y = ballVel.y * -1;
   }
-}
+
+  // paddle collisions
+  if (ball.x <= PADDLE_WIDTH * 3.5) {
+    // left paddle
+
+    // out of bounds
+    if (ball.x <= PADDLE_WIDTH) {
+      p2Score++;
+      reset();
+      return;
+    }
+
+    if (ball.y > paddle1 && ball.y < paddle1 + PADDLE_HEIGHT) {
+      // stop ball getting stuck inside paddle
+      if (ballVel.x < 0) {
+        // reverse ball direction
+        ballVel.x = ballVel.x * -1;
+        // speed up ball
+        ballVel.mult(random(1, 1.1));
+      }
+    }
+
+  } else if (ball.x >= width - (PADDLE_WIDTH * 3.5)) {
+    // right paddle
+
+    // out of bounds
+    if (ball.x >= width - PADDLE_WIDTH) {
+      p1Score++;
+      reset();
+      return;
+    }
+
+    if (ball.y > paddle2 && ball.y < paddle2 + PADDLE_HEIGHT) {
+      // stop ball getting stuck inside paddle
+      if (ballVel.x > 0) {
+
+        // Invert x axis direction
+        ballVel.x = ballVel.x * -1;
+        // speed up ball
+        ballVel.mult(random(1, 1.1));
+      }
+    }
+  }
 
 }
 
 /* Function that handles paddle movement*/
-function handleMovement(){
-// player one controls
-if (keyIsDown(87)){
-  //move up
-paddle1Vel = paddle1Vel - 5;
-}
-else if (keyIsDown(83)){
-  //move down
-  paddle1Vel = paddle1Vel + 5;
+function handleMovement() {
+  // player one controls
+  if (keyIsDown(87)) {
+    //move up
+    paddle1Vel = paddle1Vel - 5;
+  } else if (keyIsDown(83)) {
+    //move down
+    paddle1Vel = paddle1Vel + 5;
+
+  }
+
+  //player two controls
+  if (keyIsDown(79)) {
+    //move up
+    paddle2Vel = paddle2Vel - 5;
+  } else if (keyIsDown(75)) {
+    //move down
+    paddle2Vel = paddle2Vel + 5;
+  }
+
+  // change paddle position
+  paddle1 = paddle1 + paddle1Vel;
+  paddle2 = paddle2 + paddle2Vel;
+
+  // gives the illusion of friction
+  paddle1Vel = paddle1Vel * 0.4;
+  paddle2Vel = paddle2Vel * 0.4;
+
+  // constrain paddles
+  paddle1 = constrain(paddle1, 0, height - PADDLE_HEIGHT);
+  paddle2 = constrain(paddle2, 0, height - PADDLE_HEIGHT);
 
 }
 
-//player two controls
-if (keyIsDown(UP_ARROW)){
-  //move up
-  paddle2Vel = paddle2Vel - 5;
-}
-else if (keyIsDown(DOWN_ARROW)){
-  //move down
-  paddle2Vel = paddle2Vel + 5;
+function reset() {
+  // set to default speed
+  ballVel.setMag(START_SPEED);
+  // set ball to center
+  ball = createVector(width / 2, height / 2);
 }
 
-paddle1 = paddle1 + paddle1Vel;
-paddle2 = paddle2 + paddle2Vel;
-
-// gives the illusion of friction
-paddle1Vel = paddle1Vel * 0.4;
-paddle2Vel = paddle2Vel * 0.4;
-
-// constrain paddles
-paddle1 = constrain(paddle1, 0, height - 100);
-paddle2 = constrain(paddle2, 0, height - 100);
-
+// resize canvas and background when browser window is resized
+function windowResized(){
+  resizeCanvas((windowWidth - 50),(windowHeight - 50));
+  bg.resize((windowWidth - 50),(windowHeight - 50));
 }
