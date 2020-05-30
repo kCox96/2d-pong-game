@@ -1,4 +1,4 @@
-const START_SPEED = 7;
+const START_SPEED = 6;
 const BALL_RADIUS = 30;
 
 const PADDLE_WIDTH = 20;
@@ -23,7 +23,7 @@ var ballVel;
 
 function preload(){
   // load background image
-  bg = loadImage('https://static.vecteezy.com/system/resources/previews/000/666/129/original/retro-game-background.jpg');
+  bg = loadImage('https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80');
 
 }
 
@@ -51,7 +51,7 @@ function setup() {
   ball = createVector(width / 2, height / 2);
 
   // set random trajectory for ball
-  ballVel = createVector(random(-2, 2), random(-2, 2));
+  ballVel = createVector(random(-2, 3), random(-2, 3));
   // set speed
   ballVel.setMag(START_SPEED);
 }
@@ -107,7 +107,7 @@ function handleBall() {
         // reverse ball direction
         ballVel.x = ballVel.x * -1;
         // speed up ball
-        ballVel.mult(random(1, 2));
+        ballVel.mult(random(1, 1.5));
       }
     }
 
@@ -128,7 +128,7 @@ function handleBall() {
         // Invert x axis direction
         ballVel.x = ballVel.x * -1;
         // speed up ball
-        ballVel.mult(random(1, 2));
+        ballVel.mult(random(1, 1.5));
       }
     }
   }
