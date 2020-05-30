@@ -1,4 +1,5 @@
 # 2d-pong-game
+permalink: /index.html
 
 This is a 2D pong game created using the p5.js library. The game works as follows:
 
